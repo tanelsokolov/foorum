@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <link rel="stylesheet" href="public/CSS/style.css">
+    <link rel="stylesheet" href="public/CSS/detailcss.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital@1&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<header>
+    {{ if .User.IsLoggedIn }}
+    {{ template "LoggedHeader" . }}
+    {{ else }}
+    {{ template "DefaultHeader" . }}
+    {{ end }}
+</header>
+<div class="containerdetail">
+    <!-- Navigation -->
+    <div class="subforum-title">
+        <h1>{{ .Post.Title }}</h1>
+    </div>
+
+    <!-- Topic Section -->
+    <div class="topic-container">
+        <!-- Original thread -->
+    </div>
+
+    <div class="body">
+        <div class="authors">
+            <!-- Updated username link -->
+            <div class="username"><a>{{ .Post.Username }}</a></div>
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+        </div>
+        <br>
+        <div class="content">
+            <div class="post-content">
+                <p>{{ .Post.Content }}</p>
+            </div>
+            <br>
+            <hr>
+            <!-- Downvote form -->
+            <form id="downvoteForm" action="javascript:void(0)">
+                <input type="hidden" name="postId" value="{{ .Post.Id }}">
+                <input type="hidden" name="vote" value="-1">
+                <button type="submit" class="vote-button">
+                    <img class="thumbsdown" src="https://img.icons8.com/material-outlined/24/undefined/thumbs-down.png" style="margin: 0"> {{ .Post.DownVotes }}
+                </button>
+            </form>
+            <!-- Upvote form -->
+            <form id="upvoteForm" action="javascript:void(0)">
+                <input type="hidden" name="postId" value="{{ .Post.Id }}">
+                <input type="hidden" name="vote" value="1">
+                <button type="submit" class="vote-button">
+                    <img class="thumbsup" src="https://img.icons8.com/material-outlined/24/undefined/thumb-up.png" style="margin: 0"> {{ .Post.UpVotes }}
+                </button>
+            </form>
+            <br>
+            {{ .Post.CreatedAt }}
+        </div>
+    </div>
+    <!-- Comments Section -->
+    {{ range .Post.Comments }}
+    <div class="comments-container" id="comment-{{ .Id }}">
+        <div class="body">
+            <div class="authors">
+                <!-- Updated username link -->
+                <div class="username"><a>{{ .Username }}</a></div>
+                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="">
+            </div>
+            <br>
+            <div class="content">
+                <div class="post-content">
+                    <p>{{ .Content }}</p>
+                </div>
+                <br>
+                <hr>
+                {{ .CreatedAt }}
+                
+                <!-- Voting buttons -->
+                <button type="submit" class="vote-button" data-id="{{ .Id }}" data-vote="-1" onclick="submitCommentVote(this)">
+                    <img class="thumbsdown" src="https://img.icons8.com/material-outlined/24/undefined/thumbs-down.png" style="margin: 0"> {{ .DownVotes }}
+                </button>
+
+                <button type="submit" class="vote-button" data-id="{{ .Id }}" data-vote="1" onclick="submitCommentVote(this)">
+                    <img class="thumbsup" src="https://img.icons8.com/material-outlined/24/undefined/thumb-up.png" style="margin: 0"> {{ .UpVotes }}
+                </button>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+ <!-- Comment Area -->
+ {{ if .User.IsLoggedIn }}
+ <div id="comment-area" class="comment-area">
+     <form id="commentForm" action="/api/comments" method="post" onsubmit="return validateCommentForm()">
+         <input name="postId" value="{{ .Post.Id }}" type="hidden">
+         <textarea name="content" id="commentTextArea" placeholder="Comment here ... "></textarea>
+         <input type="submit" value="Submit">
+     </form>
+ </div>
+ {{ end }}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    // Function to handle post voting via AJAX
+    function submitVote(postId, voteValue) {
+        $.ajax({
+            type: 'POST',
+            url: '/api/vote',
+            data: {
+                postId: postId,
+                vote: voteValue
+            },
+            success: function(response) {
+                $('.thumbsup').text(response.upVotes);
+                $('.thumbsdown').text(response.downVotes);
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            },
+            error: function(error) {
+                console.error('Error submitting vote:', error);
+            }
+        });
+    }
+
+    // Event listeners for post voting forms
+    $(function() {
+        $('#upvoteForm').submit(function(e) {
+            e.preventDefault();
+            var postId = $(this).find('input[name="postId"]').val();
+            submitVote(postId, 1);
+        });
+
+        $('#downvoteForm').submit(function(e) {
+            e.preventDefault();
+            var postId = $(this).find('input[name="postId"]').val();
+            submitVote(postId, -1);
+        });
+    });
+
+    // Function to handle comment voting via AJAX
+    function submitCommentVote(button) {
+        var Id = $(button).data('id'); 
+        var voteValue = $(button).data('vote');
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/comments/vote',
+            data: {
+                Id: Id,
+                vote: voteValue
+            },
+            success: function(response) {
+                $('#comment-upvotes-' + Id).text(response.upVotes);
+                $('#comment-downvotes-' + Id).text(response.downVotes);
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            },
+            error: function(error) {
+                console.error('Error submitting comment vote:', error);
+            }
+        });
+    }
+
+    // Function to validate comment form
+    function validateCommentForm() {
+        var content = document.getElementById('commentTextArea').value.trim();
+        var errors = [];
+
+        if (content === '') {
+            errors.push('Comment cannot be empty.');
+        }
+
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
+            return false; // Prevent form submission
+        }
+
+        return true; // Allow form submission
+    }
+</script>
+</body>
+</html>

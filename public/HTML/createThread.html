@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="public/CSS/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="public/CSS/CreateThread.css">
+</head>
+<body>
+<header>
+    <div class="header">
+        <a href="/" class="logo"><i class="fa fa-solid fa-user"></i>Literary Lions</a>
+        <div class="header-right">
+            <a class="active" href="/">Home</a>
+            <a href="/filter?by=liked">Liked Posts</a>
+            <a href="/filter?by=myposts">My Posts</a>
+            <a href="/newpost">New post</a>
+                    <a href="/search">Search</a>
+            <a href="/api/logout">Log out</a>
+        </div>
+    </div>
+</header>
+<form class="forminsane" action="/api/createpost" method="post" onsubmit="return validateForm()">
+    <div class="containerThread">
+        <h1>THREAD CREATION</h1>
+        <p>Please fill in the following fields to create a new thread</p>
+
+        <label for="title">Title:</label>
+        <input id="title" class="titleinput" type="text" name="title" placeholder="Title" required>
+        
+        <label for="content">Content:</label>
+        <textarea id="content" class="contentInfo" name="content" placeholder="Content" required></textarea>
+
+        <div class="contentThread">
+            <label>Categories :</label>
+            <input type="checkbox" name="categories[]" value="General">
+            <label>General</label>
+            <input type="checkbox" name="categories[]" value="Technology">
+            <label>Technology</label>
+            <input type="checkbox" name="categories[]" value="Science">
+            <label>Science</label>
+            <input type="checkbox" name="categories[]" value="Sports">
+            <label>Sports</label>
+            <input type="checkbox" name="categories[]" value="Gaming">
+            <label>Gaming</label>
+            <input type="checkbox" name="categories[]" value="Music">
+            <label>Music</label>
+        </div>
+
+        <input class="button" type="submit" value="Create">
+    </div>
+</form>
+
+<script>
+    function validateForm() {
+        var title = document.getElementById('title').value.trim();
+        var content = document.getElementById('content').value.trim();
+        var categories = document.querySelectorAll('input[name="categories[]"]:checked');
+        var errors = [];
+
+        if (title.length > 60) {
+            errors.push('Title cannot be longer than 60 characters.');
+        }
+
+        if (categories.length === 0) {
+            errors.push('Please select at least one category.');
+        }
+
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
+            return false; // Prevent form submission
+        }
+
+        return true; // Allow form submission
+    }
+</script>
+
+</body>
+</html>
