@@ -1,12 +1,15 @@
 # Forum
 
-Literary Lions forum is a straightforward discussion platform with an intuitive interface. 
-Users can create topics, categorize them, reply to posts, search from posts and upvote or downvote topics.
+The Literary Lions forum is a straightforward discussion platform with an intuitive interface. Users can create topics, categorize them, reply to posts, search posts, and upvote or downvote topics.
 
 ## Backend
 
-Our backend is built with Golang and interacts with an SQLite database to manage data and handle user authentication.
-The database stores user information, topics, replies, and votes.
+Our backend is built with Golang and interacts with an SQLite database to manage data and handle user authentication. The database stores:
+
+- User information
+- Topics
+- Replies
+- Votes
 
 ## Frontend
 
@@ -14,42 +17,55 @@ The frontend is developed using HTML, CSS, and JavaScript, connecting to the bac
 
 ## Authentication
 
-Upon login, users receive a UUID token in a session cookie for authentication.
-This token is stored in the database and used for user verification. When a user logs out, the token is removed from the database.
-During registration, the username and a bcrypt-hashed password are stored in the database.
+Upon login, users receive a UUID token in a session cookie for authentication. This token is:
+
+- Stored in the database
+- Used for user verification
+
+When a user logs out, the token is removed from the database. During registration, the username and a bcrypt-hashed password are stored in the database.
 
 ## Communication
 
-Users that are logged in, can create posts, add comments, reply to posts, view topics and comments, delete topics and comments.
-Users that are not logged in, can only view topics and comments
+- **Logged-in users** can:
+  - Create posts
+  - Add comments
+  - Reply to posts
+  - View topics and comments
+  - Delete topics and comments
 
-## Like and dislike
+- **Non-logged-in users** can:
+  - View topics and comments
 
-Users that are logged in can upvote/downvote posts/comments.
-Users that are not logged in, can only see counts of votes.
+## Like and Dislike
 
-## Filter posts
+- **Logged-in users** can:
+  - Upvote/downvote posts/comments
 
-Users that are logged in can filter posts by categories, created posts and liked posts.
-Users that are not logged in can only filter posts by categories.
+- **Non-logged-in users** can:
+  - Only see counts of votes
+
+## Filter Posts
+
+- **Logged-in users** can:
+  - Filter posts by categories
+  - Filter posts by created posts
+  - Filter posts by liked posts
+
+- **Non-logged-in users** can:
+  - Only filter posts by categories
 
 ## Docker
 
-To use Docker to run the application, create a Dockerfile in the root directory of the repository.
+To use Docker to run the application:
 
-To create the Docker image, we run the following command:
-```bash
-docker build -t lions .
-```
-To run the application, we use the following command:
-```bash
-docker run -p 8000:8000 -it lions
-```
-The server will be running at http://localhost:8000/
+1. Create a `Dockerfile` in the root directory of the repository.
+2. Build the Docker image with the following command:
 
-## When not using Docker to run the application
+   ```bash
+   docker build -t lions .
+   
+3. Run the application with the following command:
+   ```bash
+   docker run -p 8000:8000 -it lions
 
-```bash
-go run main.go
-```
-The server will be running at http://localhost:8000/
+The server will be running at http://localhost:8000/.
