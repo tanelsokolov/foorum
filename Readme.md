@@ -1,4 +1,4 @@
-# Forum
+# The Literary Lions
 
 The Literary Lions forum is a straightforward discussion platform with an intuitive interface. Users can create topics, categorize them, reply to posts, search posts, and upvote or downvote topics.
 
