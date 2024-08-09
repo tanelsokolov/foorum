@@ -58,14 +58,24 @@ When a user logs out, the token is removed from the database. During registratio
 
 To use Docker to run the application:
 
-1. Create a `Dockerfile` in the root directory of the repository.
-2. Build the Docker image with the following command:
+1. Build the Docker image with the following command:
 
    ```bash
    docker build -t lions .
    
-3. Run the application with the following command:
+2. Run the application with the following command:
    ```bash
    docker run -p 8000:8000 -it lions
 
+The server will be running at http://localhost:8000/.
+
+## Running without Docker
+
+To run the application without Docker, use:
+
+1. Run the following command
+
+   ```bash
+   go run main.go
+   
 The server will be running at http://localhost:8000/.
